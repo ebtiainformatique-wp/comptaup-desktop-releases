@@ -19,9 +19,9 @@ on:
         required: false
         default: ""
       model:
-        description: "Modèle OpenRouter (provider/model)"
+        description: "Modèles OpenRouter GRATUITS (:free), séparés par des espaces"
         required: false
-        default: "openrouter/anthropic/claude-sonnet-4.5"
+        default: "openrouter/qwen/qwen3-coder:free openrouter/deepseek/deepseek-chat-v3.1:free openrouter/z-ai/glm-4.5-air:free"
 
 jobs:
   opencode-comment:
@@ -43,7 +43,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         with:
-          model: openrouter/anthropic/claude-sonnet-4.5
+          model: openrouter/qwen/qwen3-coder:free
 
   opencode-task:
     if: github.event_name == 'workflow_dispatch'
@@ -67,7 +67,8 @@ jobs:
       - name: "Travailler jusqu'à STATUS: DONE"
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OPENCODE_MODEL: ${{ inputs.model }}
+          OPENCODE_MODELS: ${{ inputs.model }}
+          AI_FREE_WAIT: "300"
           AI_MAX_ROUNDS: "10"
           TASK: ${{ inputs.task }}
         run: scripts/ai-dev.sh --mode opencode "$TASK"

@@ -1,5 +1,7 @@
 # Règles communes aux agents IA (Claude Code + OpenCode)
 
+> OpenCode utilise uniquement des modèles OpenRouter gratuits (`:free`).
+
 Ce fichier est lu automatiquement par **OpenCode** (`AGENTS.md`) et par **Claude Code** (via `CLAUDE.md`).
 Les deux agents travaillent sur le même dépôt et doivent pouvoir se passer le relais à tout moment.
 

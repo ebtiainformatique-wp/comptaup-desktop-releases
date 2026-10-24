@@ -20,8 +20,8 @@ npm install -g opencode-ai            # OpenCode
 npm install -g @anthropic-ai/claude-code   # Claude Code (si pas déjà installé)
 ```
 
-Créez une clé sur https://openrouter.ai/settings/keys et **ajoutez du crédit OpenRouter**
-(votre tableau de bord affiche 0 $ : sans crédit, seuls les modèles `:free` fonctionnent).
+Créez une clé sur https://openrouter.ai/settings/keys (aucun crédit nécessaire : le projet
+utilise **uniquement des modèles gratuits** `:free`).
 
 Windows (PowerShell, permanent) :
 ```powershell
@@ -40,8 +40,15 @@ macOS / Linux : ajoutez `export OPENROUTER_API_KEY=sk-or-...` à `~/.bashrc` ou 
 | OpenCode interactif | `opencode` | `opencode` |
 
 Options :
-- `OPENCODE_MODEL` : changer de modèle, ex. `openrouter/qwen/qwen3-coder` (moins cher).
-  Liste des modèles : commande `/models` dans OpenCode.
+- **Modèles gratuits uniquement.** Par défaut, le script essaie dans l'ordre : qwen3-coder,
+  deepseek-chat-v3.1, glm-4.5-air, kimi-k2, gpt-oss-120b (tous `:free`). Si l'un est limité ou
+  indisponible, il passe au suivant. Si tous sont limités, il fait une pause de 15 min et reprend.
+- Tout modèle sans `:free` est **refusé** (sauf si vous mettez `AI_ALLOW_PAID=1`).
+- `OPENCODE_MODELS` : votre propre liste, ex. `"openrouter/qwen/qwen3-coder:free openrouter/z-ai/glm-4.5-air:free"`.
+  Modèles gratuits disponibles : https://openrouter.ai/models?max_price=0
+- Limite OpenRouter sur les modèles gratuits : environ 50 requêtes/jour sans crédit acheté
+  (1000/jour après un achat unique de 10 $). Un agent consomme vite des requêtes : les grosses
+  tâches peuvent s'étaler sur plusieurs jours.
 - `AI_CHECK_CMD` : commande qui doit réussir avant d'accepter « terminé », ex. `npm test`.
 - `AI_MAX_ROUNDS` / `-MaxRounds` : nombre max de tours (20 par défaut) pour éviter de vider
   votre crédit OpenRouter en boucle.
