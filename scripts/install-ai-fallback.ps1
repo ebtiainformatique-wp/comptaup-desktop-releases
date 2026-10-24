@@ -6,7 +6,8 @@ foreach ($d in "scripts", ".ai", ".github/workflows") { New-Item -ItemType Direc
 foreach ($f in "AGENTS.md", "opencode.json", ".github/workflows/opencode.yml") {
   if (-not (Test-Path (Join-Path $Dest $f))) { Copy-Item (Join-Path $Src $f) (Join-Path $Dest $f) }
 }
-Copy-Item "$Src/scripts/ai-dev.sh", "$Src/scripts/ai-dev.ps1" (Join-Path $Dest "scripts") -Force
+Copy-Item "$Src/scripts/ai-dev.sh", "$Src/scripts/ai-dev.ps1", "$Src/scripts/setup-windows.ps1" (Join-Path $Dest "scripts") -Force
+Copy-Item "$Src/ai.cmd" $Dest -Force
 $claude = Join-Path $Dest "CLAUDE.md"
 if (-not ((Test-Path $claude) -and (Select-String -Path $claude -Pattern '@AGENTS.md' -Quiet))) { Add-Content $claude "@AGENTS.md" }
 $h = Join-Path $Dest ".ai/HANDOFF.md"

@@ -80,14 +80,29 @@ function Invoke-OpenCode {
   return 4   # tous les modèles gratuits sont limités pour l'instant
 }
 
+# Petit test : Claude a-t-il de nouveau du crédit ? (coûte très peu)
+$ClaudeRetryMin = if ($env:AI_CLAUDE_RETRY_MIN) { [int]$env:AI_CLAUDE_RETRY_MIN } else { 15 }
+$lastClaudeCheck = Get-Date
+function Test-ClaudeAvailable {
+  if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { return $false }
+  $out = (claude -p "Réponds uniquement OK" 2>&1 | Out-String)
+  return ($LASTEXITCODE -eq 0 -and $out -notmatch $LimitRe)
+}
+
 $current = if ($Mode -eq "auto") { "claude" } else { $Mode }
 for ($round = 1; $round -le $MaxRounds; $round++) {
+  if ($Mode -eq "auto" -and $current -eq "opencode" -and ((Get-Date) - $lastClaudeCheck).TotalMinutes -ge $ClaudeRetryMin) {
+    $lastClaudeCheck = Get-Date
+    Write-Host "→ Vérification du crédit Claude..."
+    if (Test-ClaudeAvailable) { Write-Host "✓ Crédit Claude disponible → retour sur Claude Code."; $current = "claude" }
+    else { Write-Host "✗ Toujours pas de crédit Claude, OpenCode continue." }
+  }
   Write-Host "=== Tour $round/$MaxRounds — agent : $current ==="
   if ($current -eq "claude") {
     $rc = Invoke-Claude
     if (($rc -eq 3 -or $rc -eq 2) -and $Mode -eq "auto") {
       Write-Host "⚠ Claude indisponible (crédits/limite) → relais OpenCode."
-      $current = "opencode"; continue
+      $current = "opencode"; $lastClaudeCheck = Get-Date; continue
     }
   } else {
     $rc = Invoke-OpenCode

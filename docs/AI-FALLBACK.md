@@ -13,7 +13,20 @@ arrêté et continue jusqu'au résultat. Vous pouvez aussi travailler **uniqueme
 - `opencode.json` : OpenCode branché sur OpenRouter, avec toutes les permissions accordées
   (pour travailler sans interruption).
 
-## Installation (une fois, sur votre PC)
+## Démarrage rapide (Windows)
+
+Dans **Windows PowerShell**, depuis le dossier du projet :
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\setup-windows.ps1   # une seule fois
+.\ai "décrivez votre tâche"                                            # à chaque tâche
+```
+- `.\ai "tâche"` : Claude travaille ; si son crédit est épuisé, OpenCode (gratuit) prend le relais ;
+  toutes les 15 min le script vérifie si Claude a de nouveau du crédit et **revient sur Claude**.
+- `.\ai -Mode opencode "tâche"` : OpenCode uniquement.
+- `.\ai` : reprendre la tâche en cours.
+- `AI_CLAUDE_RETRY_MIN` : changer l'intervalle de vérification du crédit Claude (15 par défaut).
+
+## Installation manuelle (une fois, sur votre PC)
 
 ```bash
 npm install -g opencode-ai            # OpenCode

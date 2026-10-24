@@ -101,15 +101,30 @@ run_opencode() {
   return 4   # tous les modèles gratuits sont limités pour l'instant
 }
 
+# Petit test : Claude a-t-il de nouveau du crédit ? (coûte très peu)
+CLAUDE_RETRY_SEC=$(( ${AI_CLAUDE_RETRY_MIN:-15} * 60 ))
+last_claude_check=$(date +%s)
+claude_available() {
+  command -v claude >/dev/null || return 1
+  local out; out=$(claude -p "Réponds uniquement OK" 2>&1) || return 1
+  ! grep -Eiq "$LIMIT_RE" <<< "$out"
+}
+
 current="$MODE"; [[ "$MODE" == "auto" ]] && current="claude"
 
 for ((round = 1; round <= MAX_ROUNDS; round++)); do
+  if [[ "$MODE" == "auto" && "$current" == "opencode" ]] && (( $(date +%s) - last_claude_check >= CLAUDE_RETRY_SEC )); then
+    last_claude_check=$(date +%s)
+    echo "→ Vérification du crédit Claude..."
+    if claude_available; then echo "✓ Crédit Claude disponible → retour sur Claude Code."; current="claude"
+    else echo "✗ Toujours pas de crédit Claude, OpenCode continue."; fi
+  fi
   echo "=== Tour $round/$MAX_ROUNDS — agent : $current ==="
   if [[ "$current" == "claude" ]]; then
     run_claude; rc=$?
     if [[ $rc -eq 3 || $rc -eq 2 ]] && [[ "$MODE" == "auto" ]]; then
       echo "⚠ Claude indisponible (crédits/limite) → relais OpenCode."
-      current="opencode"; continue
+      current="opencode"; last_claude_check=$(date +%s); continue
     fi
   else
     run_opencode; rc=$?
