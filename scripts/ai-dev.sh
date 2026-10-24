@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# Lance une tâche de code avec Claude Code, et bascule sur OpenCode (OpenRouter)
+# quand les crédits / la limite Claude sont épuisés. Boucle jusqu'à STATUS: DONE.
+#
+# Usage :
+#   scripts/ai-dev.sh "Ma tâche"                 # auto : Claude puis relais OpenCode
+#   scripts/ai-dev.sh --mode opencode "Ma tâche" # OpenCode uniquement
+#   scripts/ai-dev.sh --mode claude "Ma tâche"   # Claude uniquement
+#   scripts/ai-dev.sh                            # reprend la tâche décrite dans .ai/HANDOFF.md
+#
+# Variables utiles :
+#   OPENROUTER_API_KEY  (obligatoire pour OpenCode)
+#   OPENCODE_MODEL      ex: openrouter/qwen/qwen3-coder (défaut : celui de opencode.json)
+#   AI_MAX_ROUNDS       nombre max de tours (défaut 20)
+#   AI_CHECK_CMD        commande de vérification, ex: "npm test" (optionnel)
+set -uo pipefail
+
+MODE="auto"
+MAX_ROUNDS="${AI_MAX_ROUNDS:-20}"
+HANDOFF=".ai/HANDOFF.md"
+LOG_DIR=".ai/logs"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --mode) MODE="$2"; shift 2 ;;
+    --max-rounds) MAX_ROUNDS="$2"; shift 2 ;;
+    -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
+    *) break ;;
+  esac
+done
+TASK="${*:-}"
+
+cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+mkdir -p "$LOG_DIR" .ai
+[[ -f "$HANDOFF" ]] || printf 'STATUS: IN_PROGRESS\n\n## Objectif\n%s\n' "$TASK" > "$HANDOFF"
+
+# Messages typiques quand Claude n'a plus de crédit / atteint sa limite.
+LIMIT_RE='usage limit|limit reached|rate.?limit|credit balance|insufficient.?credit|out of credits|quota|overloaded|429|5-hour limit|weekly limit'
+
+prompt_for() {
+  local base="Lis AGENTS.md puis .ai/HANDOFF.md et continue le travail là où il s'est arrêté, sans t'arrêter avant la fin. Mets à jour .ai/HANDOFF.md et committe après chaque étape. Écris 'STATUS: DONE' seulement quand tout est terminé et vérifié."
+  if [[ -n "$TASK" ]]; then echo "$base Tâche demandée : $TASK"; else echo "$base"; fi
+}
+
+is_done() {
+  grep -q '^STATUS: DONE' "$HANDOFF" 2>/dev/null || return 1
+  if [[ -n "${AI_CHECK_CMD:-}" ]]; then
+    echo "→ Vérification : $AI_CHECK_CMD"
+    if ! bash -c "$AI_CHECK_CMD"; then
+      echo "✗ Vérification échouée, on continue."
+      sed -i.bak 's/^STATUS: DONE/STATUS: IN_PROGRESS/' "$HANDOFF" && rm -f "$HANDOFF.bak"
+      TASK="${TASK} (La vérification '$AI_CHECK_CMD' a échoué : corrige-la.)"
+      return 1
+    fi
+  fi
+  return 0
+}
+
+run_claude() {
+  command -v claude >/dev/null || { echo "claude introuvable"; return 2; }
+  local log="$LOG_DIR/claude-$(date +%Y%m%d-%H%M%S).log"
+  claude -p "$(prompt_for)" --dangerously-skip-permissions 2>&1 | tee "$log"
+  local rc=${PIPESTATUS[0]}
+  if grep -Eiq "$LIMIT_RE" "$log" && [[ $rc -ne 0 || $(wc -l < "$log") -lt 5 ]]; then
+    return 3   # crédits / limite épuisés
+  fi
+  return $rc
+}
+
+run_opencode() {
+  command -v opencode >/dev/null || { echo "opencode introuvable : npm i -g opencode-ai"; return 2; }
+  [[ -n "${OPENROUTER_API_KEY:-}" ]] || { echo "OPENROUTER_API_KEY manquante"; return 2; }
+  local log="$LOG_DIR/opencode-$(date +%Y%m%d-%H%M%S).log"
+  local args=(run --auto)
+  [[ -n "${OPENCODE_MODEL:-}" ]] && args+=(--model "$OPENCODE_MODEL")
+  opencode "${args[@]}" "$(prompt_for)" 2>&1 | tee "$log"
+  return ${PIPESTATUS[0]}
+}
+
+current="$MODE"; [[ "$MODE" == "auto" ]] && current="claude"
+
+for ((round = 1; round <= MAX_ROUNDS; round++)); do
+  echo "=== Tour $round/$MAX_ROUNDS — agent : $current ==="
+  if [[ "$current" == "claude" ]]; then
+    run_claude; rc=$?
+    if [[ $rc -eq 3 || $rc -eq 2 ]] && [[ "$MODE" == "auto" ]]; then
+      echo "⚠ Claude indisponible (crédits/limite) → relais OpenCode."
+      current="opencode"; continue
+    fi
+  else
+    run_opencode; rc=$?
+    [[ $rc -eq 2 ]] && exit 2
+  fi
+  if is_done; then echo "✓ Tâche terminée (STATUS: DONE)."; exit 0; fi
+  [[ $rc -ne 0 ]] && sleep 10
+done
+
+echo "✗ Nombre max de tours atteint ($MAX_ROUNDS). Voir $HANDOFF et $LOG_DIR/."
+exit 1
