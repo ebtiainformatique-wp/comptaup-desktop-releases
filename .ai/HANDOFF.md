@@ -9,11 +9,11 @@ Ventes sous prix minimum (code dans le depot INTENDANCE-BUSINESS-) :
 ## Fait
 - Point 2 livre sur la branche `claude/reprise-abandon-vente-refusee` du depot INTENDANCE-BUSINESS-
   (migration additive, API, interface, tests OK, parcours verifie au navigateur).
-- Point 1 : la scission existe deja depuis le 2026-11-01 (comptant et credit).
+- Point 1 : scission (depuis 2026-11-01) etendue le 2026-11-12 a l'avance (imputee d'abord sur la
+  facture immediate) et au tiers payant (prorata), meme branche, tests OK.
 
 ## Reste à faire (prochaine étape en premier)
-- Decision client attendue : scinder aussi les ventes avec avance partielle / tiers payant
-  (aujourd'hui toute la vente reste en attente dans ces deux cas, `canSplit` dans sale.service.ts).
+- Verifier au navigateur une vente scindee avec avance (couvert par les tests API seulement).
 - Ouvrir la PR de la branche si le client la demande.
 
 ## Notes / pièges
