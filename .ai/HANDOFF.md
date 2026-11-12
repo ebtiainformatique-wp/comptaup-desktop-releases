@@ -14,7 +14,11 @@ Ventes sous prix minimum (code dans le depot INTENDANCE-BUSINESS-) :
 
 ## Reste à faire (prochaine étape en premier)
 - Verifier au navigateur une vente scindee avec avance (couvert par les tests API seulement).
-- Ouvrir la PR de la branche si le client la demande.
+- PR ebtiainformatique-wp/INTENDANCE-BUSINESS-#100 fusionnee le 2026-11-12 (CI verte) :
+  appliquer `prisma migrate deploy` au deploiement.
+- Audit etats financiers (bilan / compte de resultat / tableau de bord) : 8 questions posees
+  au client (architecture A/B, capital + exercice, methode CMV, classement achats, catégories,
+  services, donnees reelles, decoupage en lots). Attendre ses reponses AVANT de coder.
 
 ## Notes / pièges
 - Voir PROGRESS_VENTE_SOUS_PRIX_MIN.md (section du 2026-11-12) dans INTENDANCE-BUSINESS-.
