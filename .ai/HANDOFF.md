@@ -15,8 +15,9 @@ Le client a demande de travailler en autonomie jusqu'a son retour.
 - Evaluation de la branche partie double de l'autre agent (RAPPORT.md section 6).
 
 ## Reste a faire (prochaine etape en premier)
-- Resultat final de la suite complete dans RAPPORT.md (section 3 bis), verification navigateur, PR.
-- NE PAS fusionner sans accord explicite du client (change les chiffres affiches a tous les clients).
+- PR ebtiainformatique-wp/INTENDANCE-BUSINESS-#108 ouverte (924/924 tests, controle final 44/44,
+  verification navigateur OK). Surveiller la CI ; NE PAS fusionner sans accord explicite du client
+  (change les chiffres affiches a tous les clients). Decisions listees dans RAPPORT.md section 7.
 - Ensuite : reporter CMV / classement par ligne dans la branche feat/compta-partie-double-internationale.
 
 ## Notes / pieges
