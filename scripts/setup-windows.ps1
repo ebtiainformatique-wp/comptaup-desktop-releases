@@ -26,6 +26,17 @@ if (-not $key) {
 } else { Write-Host "✓ Clé OpenRouter déjà enregistrée" }
 $env:OPENROUTER_API_KEY = $key
 
+$ak = [Environment]::GetEnvironmentVariable("AI_ANTHROPIC_API_KEY", "User")
+if (-not $ak) {
+  Write-Host "`n(Facultatif) Clé API Claude payée à l'usage, utilisée seulement quand l'abonnement est épuisé."
+  Write-Host "Créez-la sur https://console.anthropic.com/settings/keys et fixez un plafond de dépense dans Billing → Limits."
+  $ak = Read-Host "Clé API Claude (sk-ant-...), ou Entrée pour passer"
+  if ($ak -like "sk-ant-*") {
+    [Environment]::SetEnvironmentVariable("AI_ANTHROPIC_API_KEY", $ak, "User")
+    Write-Host "✓ Clé API Claude enregistrée."
+  } elseif ($ak) { Write-Host "✗ La clé doit commencer par sk-ant- (ignorée)." } else { Write-Host "→ Pas de clé API Claude : relais direct vers OpenCode." }
+} else { Write-Host "✓ Clé API Claude déjà enregistrée" }
+
 Write-Host "`nTest de la clé OpenRouter..."
 try {
   $r = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/key" -Headers @{ Authorization = "Bearer $key" }

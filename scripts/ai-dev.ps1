@@ -1,16 +1,24 @@
 # Version Windows de scripts/ai-dev.sh
-# Claude Code d'abord, relais OpenCode (OpenRouter) quand les crédits Claude sont épuisés.
+# Ordre en mode auto :
+#   1. Claude Code avec votre abonnement
+#   2. Claude Code avec une clé API payée à l'usage (si AI_ANTHROPIC_API_KEY est définie)
+#   3. OpenCode avec les modèles OpenRouter gratuits
+# Retour automatique sur l'abonnement dès qu'il a de nouveau du crédit.
 #
-#   .\scripts\ai-dev.ps1 "Ma tâche"                  # auto
-#   .\scripts\ai-dev.ps1 -Mode opencode "Ma tâche"   # OpenCode uniquement
-#   .\scripts\ai-dev.ps1 -Mode claude "Ma tâche"     # Claude uniquement
+#   .\scripts\ai-dev.ps1 "Ma tâche"                    # auto
+#   .\scripts\ai-dev.ps1 -Mode opencode "Ma tâche"     # OpenCode uniquement
+#   .\scripts\ai-dev.ps1 -Mode claude "Ma tâche"       # Claude (abonnement) uniquement
+#   .\scripts\ai-dev.ps1 -Mode claude-api "Ma tâche"   # Claude avec la clé API uniquement
 #   .\scripts\ai-dev.ps1                             # reprend .ai\HANDOFF.md
 #
 # Variables : $env:OPENROUTER_API_KEY (obligatoire pour OpenCode),
+#             $env:AI_ANTHROPIC_API_KEY (clé API Claude, utilisée seulement quand l'abonnement
+#               est épuisé ; volontairement PAS nommée ANTHROPIC_API_KEY, sinon Claude Code
+#               l'utiliserait tout le temps à la place de l'abonnement),
 #             $env:OPENCODE_MODELS (liste de modèles :free séparés par des espaces),
 #             $env:AI_CHECK_CMD (ex: "npm test")
 param(
-  [ValidateSet("auto", "claude", "opencode")][string]$Mode = "auto",
+  [ValidateSet("auto", "claude", "claude-api", "opencode")][string]$Mode = "auto",
   [int]$MaxRounds = 20,
   [Parameter(ValueFromRemainingArguments = $true)][string[]]$Task
 )
@@ -42,10 +50,19 @@ function Test-Done {
   return $true
 }
 
-function Invoke-Claude {
+# Lance claude avec l'abonnement ("sub") ou la clé API ("api").
+function Invoke-ClaudeAs([string]$Tier, [scriptblock]$Body) {
+  $saved = $env:ANTHROPIC_API_KEY
+  if ($Tier -eq "api") { $env:ANTHROPIC_API_KEY = $env:AI_ANTHROPIC_API_KEY } else { Remove-Item Env:ANTHROPIC_API_KEY -ErrorAction SilentlyContinue }
+  try { & $Body } finally { if ($null -ne $saved) { $env:ANTHROPIC_API_KEY = $saved } else { Remove-Item Env:ANTHROPIC_API_KEY -ErrorAction SilentlyContinue } }
+}
+
+function Invoke-Claude([string]$Tier = "sub") {
   if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { Write-Host "claude introuvable"; return 2 }
-  $log = "$LogDir/claude-$(Get-Date -Format yyyyMMdd-HHmmss).log"
-  claude -p (Get-Prompt) --dangerously-skip-permissions 2>&1 | Tee-Object -FilePath $log | Out-Host
+  if ($Tier -eq "api" -and -not $env:AI_ANTHROPIC_API_KEY) { Write-Host "AI_ANTHROPIC_API_KEY manquante"; return 2 }
+  $log = "$LogDir/claude-$Tier-$(Get-Date -Format yyyyMMdd-HHmmss).log"
+  $prompt = Get-Prompt
+  Invoke-ClaudeAs $Tier { claude -p $prompt --dangerously-skip-permissions 2>&1 | Tee-Object -FilePath $log | Out-Host }
   $rc = $LASTEXITCODE
   $out = Get-Content $log -Raw
   if ($out -match $LimitRe -and ($rc -ne 0 -or (Get-Content $log).Count -lt 5)) { return 3 }
@@ -85,24 +102,32 @@ $ClaudeRetryMin = if ($env:AI_CLAUDE_RETRY_MIN) { [int]$env:AI_CLAUDE_RETRY_MIN 
 $lastClaudeCheck = Get-Date
 function Test-ClaudeAvailable {
   if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { return $false }
-  $out = (claude -p "Réponds uniquement OK" 2>&1 | Out-String)
+  $out = Invoke-ClaudeAs "sub" { claude -p "Réponds uniquement OK" 2>&1 | Out-String }
   return ($LASTEXITCODE -eq 0 -and $out -notmatch $LimitRe)
 }
 
 $current = if ($Mode -eq "auto") { "claude" } else { $Mode }
 for ($round = 1; $round -le $MaxRounds; $round++) {
-  if ($Mode -eq "auto" -and $current -eq "opencode" -and ((Get-Date) - $lastClaudeCheck).TotalMinutes -ge $ClaudeRetryMin) {
+  if ($Mode -eq "auto" -and $current -ne "claude" -and ((Get-Date) - $lastClaudeCheck).TotalMinutes -ge $ClaudeRetryMin) {
     $lastClaudeCheck = Get-Date
-    Write-Host "→ Vérification du crédit Claude..."
-    if (Test-ClaudeAvailable) { Write-Host "✓ Crédit Claude disponible → retour sur Claude Code."; $current = "claude" }
-    else { Write-Host "✗ Toujours pas de crédit Claude, OpenCode continue." }
+    Write-Host "→ Vérification du crédit de l'abonnement Claude..."
+    if (Test-ClaudeAvailable) { Write-Host "✓ Abonnement Claude disponible → retour sur l'abonnement."; $current = "claude" }
+    else { Write-Host "✗ Abonnement toujours épuisé, $current continue." }
   }
   Write-Host "=== Tour $round/$MaxRounds — agent : $current ==="
   if ($current -eq "claude") {
-    $rc = Invoke-Claude
+    $rc = Invoke-Claude "sub"
     if (($rc -eq 3 -or $rc -eq 2) -and $Mode -eq "auto") {
-      Write-Host "⚠ Claude indisponible (crédits/limite) → relais OpenCode."
-      $current = "opencode"; $lastClaudeCheck = Get-Date; continue
+      if ($env:AI_ANTHROPIC_API_KEY) { Write-Host "⚠ Abonnement Claude épuisé → relais Claude avec la clé API."; $current = "claude-api" }
+      else { Write-Host "⚠ Abonnement Claude épuisé → relais OpenCode."; $current = "opencode" }
+      $lastClaudeCheck = Get-Date; continue
+    }
+  } elseif ($current -eq "claude-api") {
+    $rc = Invoke-Claude "api"
+    if ($rc -eq 3 -or $rc -eq 2) {
+      if ($Mode -ne "auto") { exit $rc }
+      Write-Host "⚠ Clé API Claude épuisée (ou plafond atteint) → relais OpenCode."
+      $current = "opencode"; continue
     }
   } else {
     $rc = Invoke-OpenCode

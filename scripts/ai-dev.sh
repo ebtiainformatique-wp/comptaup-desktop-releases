@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
-# Lance une tâche de code avec Claude Code, et bascule sur OpenCode (OpenRouter)
-# quand les crédits / la limite Claude sont épuisés. Boucle jusqu'à STATUS: DONE.
+# Lance une tâche de code. Ordre en mode auto :
+#   1. Claude Code avec votre abonnement
+#   2. Claude Code avec une clé API payée à l'usage (si AI_ANTHROPIC_API_KEY est définie)
+#   3. OpenCode avec les modèles OpenRouter gratuits
+# Retour automatique sur l'abonnement dès qu'il a de nouveau du crédit. Boucle jusqu'à STATUS: DONE.
 #
 # Usage :
 #   scripts/ai-dev.sh "Ma tâche"                 # auto : Claude puis relais OpenCode
 #   scripts/ai-dev.sh --mode opencode "Ma tâche" # OpenCode uniquement
-#   scripts/ai-dev.sh --mode claude "Ma tâche"   # Claude uniquement
+#   scripts/ai-dev.sh --mode claude "Ma tâche"   # Claude (abonnement) uniquement
+#   scripts/ai-dev.sh --mode claude-api "Ma tâche" # Claude avec la clé API uniquement
 #   scripts/ai-dev.sh                            # reprend la tâche décrite dans .ai/HANDOFF.md
 #
 # Variables utiles :
 #   OPENROUTER_API_KEY  (obligatoire pour OpenCode)
+#   AI_ANTHROPIC_API_KEY clé API Claude (console.anthropic.com), utilisée seulement quand
+#                       l'abonnement est épuisé. Volontairement PAS nommée ANTHROPIC_API_KEY,
+#                       sinon Claude Code l'utiliserait tout le temps à la place de l'abonnement.
 #   OPENCODE_MODELS     modèles :free séparés par des espaces (défaut : liste gratuite ci-dessous)
 #   AI_MAX_ROUNDS       nombre max de tours (défaut 20)
 #   AI_CHECK_CMD        commande de vérification, ex: "npm test" (optionnel)
@@ -56,11 +63,18 @@ is_done() {
   return 0
 }
 
+# $1 = "sub" (abonnement) ou "api" (clé API payée à l'usage)
 run_claude() {
+  local tier="${1:-sub}" log rc
   command -v claude >/dev/null || { echo "claude introuvable"; return 2; }
-  local log="$LOG_DIR/claude-$(date +%Y%m%d-%H%M%S).log"
-  claude -p "$(prompt_for)" --dangerously-skip-permissions 2>&1 | tee "$log"
-  local rc=${PIPESTATUS[0]}
+  log="$LOG_DIR/claude-$tier-$(date +%Y%m%d-%H%M%S).log"
+  if [[ "$tier" == api ]]; then
+    [[ -n "${AI_ANTHROPIC_API_KEY:-}" ]] || { echo "AI_ANTHROPIC_API_KEY manquante"; return 2; }
+    ANTHROPIC_API_KEY="$AI_ANTHROPIC_API_KEY" claude -p "$(prompt_for)" --dangerously-skip-permissions 2>&1 | tee "$log"
+  else
+    env -u ANTHROPIC_API_KEY claude -p "$(prompt_for)" --dangerously-skip-permissions 2>&1 | tee "$log"
+  fi
+  rc=${PIPESTATUS[0]}
   if grep -Eiq "$LIMIT_RE" "$log" && [[ $rc -ne 0 || $(wc -l < "$log") -lt 5 ]]; then
     return 3   # crédits / limite épuisés
   fi
@@ -106,25 +120,36 @@ CLAUDE_RETRY_SEC=$(( ${AI_CLAUDE_RETRY_MIN:-15} * 60 ))
 last_claude_check=$(date +%s)
 claude_available() {
   command -v claude >/dev/null || return 1
-  local out; out=$(claude -p "Réponds uniquement OK" 2>&1) || return 1
+  local out; out=$(env -u ANTHROPIC_API_KEY claude -p "Réponds uniquement OK" 2>&1) || return 1
   ! grep -Eiq "$LIMIT_RE" <<< "$out"
 }
 
 current="$MODE"; [[ "$MODE" == "auto" ]] && current="claude"
 
 for ((round = 1; round <= MAX_ROUNDS; round++)); do
-  if [[ "$MODE" == "auto" && "$current" == "opencode" ]] && (( $(date +%s) - last_claude_check >= CLAUDE_RETRY_SEC )); then
+  if [[ "$MODE" == "auto" && "$current" != "claude" ]] && (( $(date +%s) - last_claude_check >= CLAUDE_RETRY_SEC )); then
     last_claude_check=$(date +%s)
-    echo "→ Vérification du crédit Claude..."
-    if claude_available; then echo "✓ Crédit Claude disponible → retour sur Claude Code."; current="claude"
-    else echo "✗ Toujours pas de crédit Claude, OpenCode continue."; fi
+    echo "→ Vérification du crédit de l'abonnement Claude..."
+    if claude_available; then echo "✓ Abonnement Claude disponible → retour sur l'abonnement."; current="claude"
+    else echo "✗ Abonnement toujours épuisé, $current continue."; fi
   fi
   echo "=== Tour $round/$MAX_ROUNDS — agent : $current ==="
   if [[ "$current" == "claude" ]]; then
-    run_claude; rc=$?
+    run_claude sub; rc=$?
     if [[ $rc -eq 3 || $rc -eq 2 ]] && [[ "$MODE" == "auto" ]]; then
-      echo "⚠ Claude indisponible (crédits/limite) → relais OpenCode."
-      current="opencode"; last_claude_check=$(date +%s); continue
+      if [[ -n "${AI_ANTHROPIC_API_KEY:-}" ]]; then
+        echo "⚠ Abonnement Claude épuisé → relais Claude avec la clé API."; current="claude-api"
+      else
+        echo "⚠ Abonnement Claude épuisé → relais OpenCode."; current="opencode"
+      fi
+      last_claude_check=$(date +%s); continue
+    fi
+  elif [[ "$current" == "claude-api" ]]; then
+    run_claude api; rc=$?
+    if [[ $rc -eq 3 || $rc -eq 2 ]]; then
+      [[ "$MODE" == "auto" ]] || exit $rc
+      echo "⚠ Clé API Claude épuisée (ou plafond atteint) → relais OpenCode."
+      current="opencode"; continue
     fi
   else
     run_opencode; rc=$?

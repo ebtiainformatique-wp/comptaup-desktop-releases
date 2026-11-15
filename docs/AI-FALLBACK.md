@@ -20,8 +20,17 @@ Dans **Windows PowerShell**, depuis le dossier du projet :
 powershell -ExecutionPolicy Bypass -File .\scripts\setup-windows.ps1   # une seule fois
 .\ai "décrivez votre tâche"                                            # à chaque tâche
 ```
-- `.\ai "tâche"` : Claude travaille ; si son crédit est épuisé, OpenCode (gratuit) prend le relais ;
-  toutes les 15 min le script vérifie si Claude a de nouveau du crédit et **revient sur Claude**.
+- `.\ai "tâche"` enchaîne automatiquement :
+  1. **Claude, abonnement** ;
+  2. **Claude, clé API payée à l'usage**, si vous en avez enregistré une (`AI_ANTHROPIC_API_KEY`) ;
+  3. **OpenCode, modèles gratuits**.
+
+  Toutes les 15 min, le script vérifie si l'abonnement a de nouveau du crédit et **revient dessus**.
+- `.\ai -Mode claude-api "tâche"` : Claude avec la clé API uniquement.
+- Clé API Claude : https://console.anthropic.com/settings/keys. **Fixez un plafond de dépense**
+  (Billing → Limits) : une fois le plafond atteint, le script passe sur OpenCode.
+  Elle est enregistrée sous le nom `AI_ANTHROPIC_API_KEY`, et non `ANTHROPIC_API_KEY`,
+  sinon Claude Code facturerait la clé API même quand l'abonnement a du crédit.
 - `.\ai -Mode opencode "tâche"` : OpenCode uniquement.
 - `.\ai` : reprendre la tâche en cours.
 - `AI_CLAUDE_RETRY_MIN` : changer l'intervalle de vérification du crédit Claude (15 par défaut).
