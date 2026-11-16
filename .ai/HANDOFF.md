@@ -16,6 +16,8 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - Correction audit B2/B3 : trésorerie du bilan sur mouvements caisse/banque (branche claude/audit-tresorerie-bilan, 1032 tests OK, PR non ouverte).
 - PR partie double ouverte : https://github.com/ebtiainformatique-wp/INTENDANCE-BUSINESS-/pull/122
 
+- PR ouvertes : #121 poussins, #122 partie double (+ immobilisations/emprunts au grand livre ajoutés), #123 véto facturation, #124 trésorerie bilan. CI suivie.
+
 ## Reste à faire (prochaine étape en premier)
 - Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org répond 502 via le proxy (hôte autorisé mais injoignable depuis le cloud).
 - Partie double : brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.
