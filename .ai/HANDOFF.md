@@ -18,7 +18,10 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 
 - PR ouvertes : #121 poussins, #122 partie double (+ immobilisations/emprunts au grand livre ajoutés), #123 véto facturation, #124 trésorerie bilan. CI suivie.
 
-## Reste à faire (prochaine étape en premier)
+- 16/11 ~22h : PR #121, #122, #123, #124 FUSIONNÉES dans main (partie double incluse : poussins au grand livre, mouvements de trésorerie, immobilisations/emprunts, stock d'ouverture à une date).
+
+## Reste à faire
+- Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
 - Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org répond 502 via le proxy (hôte autorisé mais injoignable depuis le cloud).
 - Partie double : brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.
 - Ouvrir la PR de claude/partie-double-pilote-cvs quand RKO valide.
