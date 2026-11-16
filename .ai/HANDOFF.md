@@ -9,11 +9,12 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - Réponses RKO aux 10 questions : TVA régime réel ; expert-comptable externe → export Excel ; poussins achetés au couvoir ; liste fixe de souches + prix ; acompte libre ; répartition manuelle ; annulation au cas par cas ; livraison gratuite ; poussins en stock.
 - Module poussins v2 (souches, stock, achat couvoir, répartition manuelle) : PR https://github.com/ebtiainformatique-wp/INTENDANCE-BUSINESS-/pull/121 (branche claude/practical-turing-q0ssas), 1043 tests OK.
 - Partie double : branche claude/partie-double-pilote-cvs = feat/compta-partie-double-internationale + merge de main (143 fichiers / 1107 tests OK) + balance/grand livre/journal/export Excel (/comptabilite/livres).
+- Partie double (suite) : sous-comptes tiers séquentiels (4110001…) ; inventaire intermédiaire (311/6031, stock d'ouverture obligatoire, variation mensuelle auto + bouton). 144 fichiers / 1114 tests OK.
 - Environnement cloud "ComptaUp" : hôtes compta-up.org autorisés.
 
 ## Reste à faire (prochaine étape en premier)
-- Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org pas encore joignable depuis le proxy au dernier essai.
-- Partie double : écritures de stock / coût des marchandises vendues (R1) ; brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.
+- Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org répond 502 via le proxy (hôte autorisé mais injoignable depuis le cloud).
+- Partie double : brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.
 - Ouvrir la PR de claude/partie-double-pilote-cvs quand RKO valide.
 
 ## Notes / pièges
