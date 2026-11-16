@@ -12,6 +12,10 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - Partie double (suite) : sous-comptes tiers séquentiels (4110001…) ; inventaire intermédiaire (311/6031, stock d'ouverture obligatoire, variation mensuelle auto + bouton). 144 fichiers / 1114 tests OK.
 - Environnement cloud "ComptaUp" : hôtes compta-up.org autorisés.
 
+- Véto : facturation des consultations en un clic (branche claude/veto-facturation, 1033 tests OK, PR non ouverte).
+- Correction audit B2/B3 : trésorerie du bilan sur mouvements caisse/banque (branche claude/audit-tresorerie-bilan, 1032 tests OK, PR non ouverte).
+- PR partie double ouverte : https://github.com/ebtiainformatique-wp/INTENDANCE-BUSINESS-/pull/122
+
 ## Reste à faire (prochaine étape en premier)
 - Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org répond 502 via le proxy (hôte autorisé mais injoignable depuis le cloud).
 - Partie double : brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.
