@@ -1,24 +1,21 @@
 STATUS: IN_PROGRESS
-Agent: claude — 2026-11-16
+Agent: claude — 2026-11-16 (après-midi)
 
 ## Objectif
-1. Audit complet ComptaUp (code : dépôt ebtiainformatique-wp/INTENDANCE-BUSINESS-) pour la pharmacie/clinique vétérinaire CVS.
-2. Module complet de commandes de poussins.
+Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, partie double, audit des chiffres réels.
 
 ## Fait
-- Audit : docs/rapports/31-audit-comptable-cvs-2026-11-16.md (+ copie dans INTENDANCE-BUSINESS- docs/audit/). Publié (claude.ai/artifact/Fsjwqs3zvMB3mMQ3YNEamb) et envoyé par email (momene.rko@gmail.com) avec 10 questions.
-- Module poussins TERMINÉ et poussé sur INTENDANCE-BUSINESS-, branche claude/practical-turing-q0ssas (3 commits) :
-  migration 20261116100000_chick_orders (avec reprise des réservations vitrine), service/routes /api/v1/chick-orders,
-  écrans /poussins et /poussins/[orderId], mode d'emploi docs/spec-commandes-poussins.md.
-  Vérifié : typecheck + lint OK, 128 fichiers / 1040 tests API OK (dont 11 nouveaux), tests web OK, rendu navigateur desktop + téléphone OK.
-- Rappels quotidiens programmés à 20h/21h/22h (Africa/Douala).
+- Audit (docs/rapports/31-audit-comptable-cvs-2026-11-16.md). Correction : la partie double EXISTE sur la branche feat/compta-partie-double-internationale (non fusionnée), l'audit portait sur main.
+- Réponses RKO aux 10 questions : TVA régime réel ; expert-comptable externe → export Excel ; poussins achetés au couvoir ; liste fixe de souches + prix ; acompte libre ; répartition manuelle ; annulation au cas par cas ; livraison gratuite ; poussins en stock.
+- Module poussins v2 (souches, stock, achat couvoir, répartition manuelle) : PR https://github.com/ebtiainformatique-wp/INTENDANCE-BUSINESS-/pull/121 (branche claude/practical-turing-q0ssas), 1043 tests OK.
+- Partie double : branche claude/partie-double-pilote-cvs = feat/compta-partie-double-internationale + merge de main (143 fichiers / 1107 tests OK) + balance/grand livre/journal/export Excel (/comptabilite/livres).
+- Environnement cloud "ComptaUp" : hôtes compta-up.org autorisés.
 
 ## Reste à faire (prochaine étape en premier)
-- Attendre les réponses de RKO (questions §9 du rapport) puis ajuster les paramètres poussins (stock, acompte minimum, répartition, frais de livraison).
-- Ouvrir une PR de la branche vers main sur INTENDANCE-BUSINESS- quand RKO valide (non faite : pas demandée).
-- Priorité 1 de l'audit : corriger l'annulation vente/achat (Payment inverse), trésorerie du bilan, contrôle d'équilibre réel.
+- Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org pas encore joignable depuis le proxy au dernier essai.
+- Partie double : écritures de stock / coût des marchandises vendues (R1) ; brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.
+- Ouvrir la PR de claude/partie-double-pilote-cvs quand RKO valide.
 
 ## Notes / pièges
-- Le dépôt comptaup-desktop-releases ne contient PAS le code de ComptaUp.
-- Pas d'accès à la base de production de CVS : audit sur le code seulement.
-- Tests API locaux : Postgres 16 lancé à la main sur le port 5433 (pas de Docker dans l'environnement cloud).
+- Tests API locaux : Postgres 16 lancé à la main (su postgres; pg_ctl -D /home/postgres/pgdata -o "-p 5433 -k /tmp" start).
+- La base de test doit être recréée en changeant de branche (migrations différentes).
