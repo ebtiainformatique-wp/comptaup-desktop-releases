@@ -21,6 +21,7 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - 16/11 ~22h : PR #121, #122, #123, #124 FUSIONNÉES dans main (partie double incluse : poussins au grand livre, mouvements de trésorerie, immobilisations/emprunts, stock d'ouverture à une date).
 
 - 17/11 : fusionnées #127 (pagination ventes/achats), #128 (produits pris à crédit affichés avec la créance), #129 (reprise d'une vente refusée à sa date d'origine), #130 (Stock > Changer les unités en masse), #131 (migration : produits 1 L de « Cabinet Vétérinaire Le Suivi » flacon → bidon, appliquée au déploiement, garde-fou une seule entreprise), #132 (historique Dépenses séparé des Achats, onglets + filtre kind).
+- Inventaire CVS « remarques AJUSTE » (30/10, annoté 05/11) : DÉJÀ INTÉGRÉ en prod les 6, 14 et 15/11 par la session « Diagnostic cabinet vétérinaire ComptaUp » (PC de RKO) : produits nouveaux créés par script les 6 et 14/11, doublons supprimés/fusionnés (CVS 417 → 370 produits), 7 ajustements STOCKTAKE, achats déjà saisis comptant (n°3, 4, 6, 58). NE PAS RÉIMPORTER. Entreprise CVS id 3bb18d12-0d08-41ab-b61d-297af2ecff74.
 - Consigne RKO : ne plus récapituler le travail validé ; seulement tâche en cours / fait / blocages.
 
 ## Reste à faire
