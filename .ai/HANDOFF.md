@@ -24,7 +24,11 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - Inventaire CVS « remarques AJUSTE » (30/10, annoté 05/11) : DÉJÀ INTÉGRÉ en prod les 6, 14 et 15/11 par la session « Diagnostic cabinet vétérinaire ComptaUp » (PC de RKO) : produits nouveaux créés par script les 6 et 14/11, doublons supprimés/fusionnés (CVS 417 → 370 produits), 7 ajustements STOCKTAKE, achats déjà saisis comptant (n°3, 4, 6, 58). NE PAS RÉIMPORTER. Entreprise CVS id 3bb18d12-0d08-41ab-b61d-297af2ecff74.
 - Consigne RKO : ne plus récapituler le travail validé ; seulement tâche en cours / fait / blocages.
 
+- 17/11 soir : PR #136 (claude/poussins-liaisons, CI vert sur le 1er commit) : client existant dans Nouvelle commande, section Commandes de poussins dans la fiche client, souche liée à un article de stock, « Programmer un arrivage » + commande au couvoir (prévisionnel), relevé client avec avances poussins (solde négatif = CVS doit au client). Attend « ok fusion ».
+- PR règle relais agents (claude/regle-relais-agents, CLAUDE.md).
+
 ## Reste à faire
+- Poussins phase 2 : acompte versé AU COUVOIR à la commande (décaissement, avance fournisseur 409), déduit à la réception.
 - Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
 - Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org répond 502 via le proxy (hôte autorisé mais injoignable depuis le cloud).
 - Partie double : brancher les acomptes et livraisons poussins sur le grand livre après fusion des deux branches ; sous-comptes clients codés 411-<uuid> → proposer 411-<code client>.

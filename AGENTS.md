@@ -14,6 +14,7 @@ Les deux agents travaillent sur le même dépôt et doivent pouvoir se passer le
 4. Quand la tâche est entièrement terminée **et vérifiée** (build/tests OK), écrire exactement
    `STATUS: DONE` sur la ligne de statut de `.ai/HANDOFF.md`. Sinon laisser `STATUS: IN_PROGRESS`.
 5. Ne jamais écrire `STATUS: DONE` si quelque chose reste à faire ou a échoué.
+6. **Crédits bientôt épuisés (consigne RKO du 17/11/2026, obligatoire)** : dès l'avertissement de fin de crédits ou de contexte, arrêter de coder, mettre `.ai/HANDOFF.md` à jour (tâche en cours, branches et PR, prochaine étape exacte), committer et pousser, puis dire à l'utilisateur où reprendre. Une autre IA doit pouvoir continuer sans perte.
 
 ## Format de `.ai/HANDOFF.md`
 
