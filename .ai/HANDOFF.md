@@ -27,6 +27,11 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - 17/11 soir : PR #136 (claude/poussins-liaisons, CI vert sur le 1er commit) : client existant dans Nouvelle commande, section Commandes de poussins dans la fiche client, souche liée à un article de stock, « Programmer un arrivage » + commande au couvoir (prévisionnel), relevé client avec avances poussins (solde négatif = CVS doit au client). FUSIONNÉE le 17/11 ~23h.
 - PR #137 règle relais agents (CLAUDE.md) FUSIONNÉE.
 
+- Nuit du 17→18/11 (RKO dort, consigne : avancer seul, ne rien fusionner, rapport au réveil) :
+  - Vitrines : 3 styles ajoutés (Moderne, Magazine, Pagne) → 6 styles × 10 activités, artifact https://claude.ai/artifact/GsNxfN3mx6xC5atf1M6KpZ (photos africaines réutilisées).
+  - Couleurs : 4 palettes proposées (A Vert savane recommandée, B Soleil, C Forêt, D Wax), artifact https://claude.ai/artifact/RUqTaw4a4JTJ5ATfKh7RuR. Ne rien modifier dans l'UI avant choix.
+  - EN COURS : audit complet de tous les onglets (prod injoignable → app locale avec compte véto réaliste), corrections de bugs en PR non fusionnées.
+
 ## Reste à faire
 - PR #138 (claude/poussins-acompte-couvoir) : acompte versé au couvoir (4091), imputé à la réception. Testée (21 + 3 compta), attend CI vert puis « ok fusion » de RKO.
 - Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
