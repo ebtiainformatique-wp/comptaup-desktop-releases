@@ -1,5 +1,5 @@
 STATUS: IN_PROGRESS
-Agent: claude — 2026-11-16 (après-midi)
+Agent: claude — 2026-11-17 (soir)
 
 ## Objectif
 Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, partie double, audit des chiffres réels.
@@ -19,6 +19,9 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - PR ouvertes : #121 poussins, #122 partie double (+ immobilisations/emprunts au grand livre ajoutés), #123 véto facturation, #124 trésorerie bilan. CI suivie.
 
 - 16/11 ~22h : PR #121, #122, #123, #124 FUSIONNÉES dans main (partie double incluse : poussins au grand livre, mouvements de trésorerie, immobilisations/emprunts, stock d'ouverture à une date).
+
+- 17/11 : fusionnées #127 (pagination ventes/achats), #128 (produits pris à crédit affichés avec la créance), #129 (reprise d'une vente refusée à sa date d'origine), #130 (Stock > Changer les unités en masse), #131 (migration : produits 1 L de « Cabinet Vétérinaire Le Suivi » flacon → bidon, appliquée au déploiement, garde-fou une seule entreprise), #132 (historique Dépenses séparé des Achats, onglets + filtre kind).
+- Consigne RKO : ne plus récapituler le travail validé ; seulement tâche en cours / fait / blocages.
 
 ## Reste à faire
 - Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
