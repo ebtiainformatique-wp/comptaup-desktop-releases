@@ -30,7 +30,10 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - Nuit du 17→18/11 (RKO dort, consigne : avancer seul, ne rien fusionner, rapport au réveil) :
   - Vitrines : 3 styles ajoutés (Moderne, Magazine, Pagne) → 6 styles × 10 activités, artifact https://claude.ai/artifact/GsNxfN3mx6xC5atf1M6KpZ (photos africaines réutilisées).
   - Couleurs : 4 palettes proposées (A Vert savane recommandée, B Soleil, C Forêt, D Wax), artifact https://claude.ai/artifact/RUqTaw4a4JTJ5ATfKh7RuR. Ne rien modifier dans l'UI avant choix.
-  - EN COURS : audit complet de tous les onglets (prod injoignable → app locale avec compte véto réaliste), corrections de bugs en PR non fusionnées.
+  - Audit fait (68 pages, copie locale CVS, bascule partie double testée : balance équilibrée, 571/521/411/401 = réels). Rapport : https://claude.ai/artifact/AWHGESZTV2ewtLBZMZDZEM
+  - #138 (acompte couvoir) FUSIONNÉE sur « ok fusion » de RKO.
+  - PR #139 (claude/audit-nuit-corrections) : inscription 500 (téléphone d'inscription abandonnée), compte de résultat (achats de stock en achats de marchandises), reprise rétroactive (acomptes poussins → 4191, acomptes couvoir → 4091), menu Prochainement nettoyé, page Livres sans zone. 1158 tests OK. ATTEND « ok fusion ».
+  - Décisions en attente RKO : régularisation trésorerie 111 → 471 ? ; dashboard marge brute au lieu de résultat net ; palette de couleurs ; vitrines à intégrer.
 
 ## Reste à faire
 - PR #138 (claude/poussins-acompte-couvoir) : acompte versé au couvoir (4091), imputé à la réception. Testée (21 + 3 compta), attend CI vert puis « ok fusion » de RKO.
