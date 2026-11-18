@@ -32,7 +32,7 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
   - Couleurs : 4 palettes proposées (A Vert savane recommandée, B Soleil, C Forêt, D Wax), artifact https://claude.ai/artifact/RUqTaw4a4JTJ5ATfKh7RuR. Ne rien modifier dans l'UI avant choix.
   - Audit fait (68 pages, copie locale CVS, bascule partie double testée : balance équilibrée, 571/521/411/401 = réels). Rapport : https://claude.ai/artifact/AWHGESZTV2ewtLBZMZDZEM
   - #138 (acompte couvoir) FUSIONNÉE sur « ok fusion » de RKO.
-  - PR #139 (claude/audit-nuit-corrections) : inscription 500 (téléphone d'inscription abandonnée), compte de résultat (achats de stock en achats de marchandises), reprise rétroactive (acomptes poussins → 4191, acomptes couvoir → 4091), menu Prochainement nettoyé, page Livres sans zone. 1158 tests OK. ATTEND « ok fusion ».
+  - PR #139 (claude/audit-nuit-corrections) : inscription 500 (téléphone d'inscription abandonnée), compte de résultat (achats de stock en achats de marchandises), reprise rétroactive (acomptes poussins → 4191, acomptes couvoir → 4091), menu Prochainement nettoyé, page Livres sans zone. 1158 tests OK. FUSIONNÉE le 18/11 sur « ok fusion » de RKO. Prochaine étape : activer la partie double chez CVS avec RKO (zone OHADA → reprise historique → stock d'ouverture 28/08/2026 → bascule admin).
   - Décisions en attente RKO : régularisation trésorerie 111 → 471 ? ; dashboard marge brute au lieu de résultat net ; palette de couleurs ; vitrines à intégrer.
 
 ## Reste à faire
