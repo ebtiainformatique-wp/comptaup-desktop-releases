@@ -35,6 +35,11 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
   - PR #139 (claude/audit-nuit-corrections) : inscription 500 (téléphone d'inscription abandonnée), compte de résultat (achats de stock en achats de marchandises), reprise rétroactive (acomptes poussins → 4191, acomptes couvoir → 4091), menu Prochainement nettoyé, page Livres sans zone. 1158 tests OK. FUSIONNÉE le 18/11 sur « ok fusion » de RKO. Prochaine étape : activer la partie double chez CVS avec RKO (zone OHADA → reprise historique → stock d'ouverture 28/08/2026 → bascule admin).
   - Décisions en attente RKO : régularisation trésorerie 111 → 471 ? ; dashboard marge brute au lieu de résultat net ; palette de couleurs ; vitrines à intégrer.
 
+- 22/11 : test LOCAL complet de la partie double (copie CVS, script scratchpad pd/scenario.ts) : 22 contrôles OK (571, 52, 411, 401, 4191, 4091, 31 = réel ; balance équilibrée ; bascule OK). 3 points trouvés, en attente de décision RKO (pas à pas, point 1 d'abord) :
+  1. Reprise : apports/subventions passés (mouvements de caisse APPORT_CAPITAL…) finissent en 111 Réserve légale (après activation, ils vont bien en 1013). Proposé : rejouer par origine + reste en 471.
+  2. Stock d'ouverture : si sous-évalué au 28/08, le stock apparu ensuite (inventaire intégré 6/11 et 14/11, ~2,97 M) devient du bénéfice. Proposé : ouverture à la date d'activation (option A) ou écart d'inventaire (B).
+  3. Après bascule, toutes les dépenses vont en 628 (détail perdu). Proposé : catégories → comptes OHADA (622 loyer, 61 transport, 605, 627…).
+
 ## Reste à faire
 - PR #138 (claude/poussins-acompte-couvoir) : acompte versé au couvoir (4091), imputé à la réception. Testée (21 + 3 compta), attend CI vert puis « ok fusion » de RKO.
 - Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
