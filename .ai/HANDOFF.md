@@ -1,5 +1,5 @@
 STATUS: IN_PROGRESS
-Agent: claude — 2026-11-17 (soir)
+Agent: claude — 2026-11-22 (soir)
 
 ## Objectif
 Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, partie double, audit des chiffres réels.
@@ -40,7 +40,15 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
   2. Stock d'ouverture : si sous-évalué au 28/08, le stock apparu ensuite (inventaire intégré 6/11 et 14/11, ~2,97 M) devient du bénéfice. Proposé : ouverture à la date d'activation (option A) ou écart d'inventaire (B).
   3. Après bascule, toutes les dépenses vont en 628 (détail perdu). Proposé : catégories → comptes OHADA (622 loyer, 61 transport, 605, 627…).
 
+- 22/11 soir : décision RKO « 1 oui, 2 A, 3 oui, travail EN LOCAL, je vérifie avant de pousser ». Fait en LOCAL, NON POUSSÉ, branche locale claude/partie-double-avant-cvs (dépôt intendance-business-, depuis main 754735b) :
+  - a7a71ce point 1 : reprise rejoue apports (1013), subventions (71), versements/transferts (585) ; écart de trésorerie restant → 471 (plus 111).
+  - 0221be2 point 3 : rôles CHARGES_LOCATIVES 622, TRANSPORTS 61, EAU_ELECTRICITE 605, TELECOMMUNICATIONS 6281, PUBLICITE 627 (migration 20261122200000_expense_nature_roles) ; catégorie de dépense → compte ; compte de résultat (grand livre) détaillé.
+  - 3277159 point 2 (option A) : page Livres propose date d'activation + valeur réelle du stock ; /accounting-zone renvoie confirmedAt.
+  - Scénario local pd/scenario.ts : 22/22 contrôles OK, 1013 = 1 500 000, 111 absent, 622/61 détaillés.
+  - Point soulevé à RKO : avec l'option A, les achats 2026 d'avant l'activation sont en charges (601) alors que le stock correspondant est crédité en 121 → résultat sous-évalué. Solution proposée : contrepartie partagée (stock issu d'achats rejoués → 6031, reste → 121).
+
 ## Reste à faire
+- (prochaine étape) Attendre la vérification de RKO sur la branche locale claude/partie-double-avant-cvs ; pousser + PR seulement sur son feu vert. Si la branche locale est perdue (conteneur recyclé), refaire à partir de la description ci-dessus.
 - PR #138 (claude/poussins-acompte-couvoir) : acompte versé au couvoir (4091), imputé à la réception. Testée (21 + 3 compta), attend CI vert puis « ok fusion » de RKO.
 - Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
 - Audit chiffres réels CVS : attendre identifiants (compte Comptable « Audit Claude ») ; compta-up.org répond 502 via le proxy (hôte autorisé mais injoignable depuis le cloud).
