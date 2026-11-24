@@ -1,5 +1,5 @@
 STATUS: IN_PROGRESS
-Agent: claude — 2026-11-23 (soir)
+Agent: claude — 2026-11-24 (soir)
 
 ## Objectif
 Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, partie double, audit des chiffres réels.
@@ -50,7 +50,11 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 - 23/11 : RKO choisit l'option a. Fait en local (b83bd94, toujours NON POUSSÉ) : à la déclaration du stock d'ouverture, la part issue des achats/ventes de l'exercice (entrées fournisseurs − sorties ventes, au coût) va en 6031, le reste en 121 ; /accounting/stock-value-at renvoie flowsValue ; la page Livres affiche la répartition. Copie CVS : résultat -15 050 (au lieu de -227 150), 22/22 OK ; 1166 tests OK.
   - RKO veut tester en local avant d'activer : tunnel public refusé par la politique de la session → fournis un git bundle (main..claude/partie-double-avant-cvs) + seed-cvs-test.mjs (copie de test via l'API locale) + LISEZMOI (scratchpad test-local/).
 
+- 24/11 soir : RKO veut activer la partie double ce soir chez CVS. Message envoyé à la session « Compta-Up audit : bilan/résultat incohérences » (session_01DwRRryomgCk1xEkgiGPPzV). Branche claude/partie-double-avant-cvs rebasée sur origin/main (2dfea4d, PR #143-#145), migration renommée 20261124200000_expense_nature_roles, 1170 tests OK. PUSH REFUSÉ par la sécurité de la session tant que RKO n'a pas écrit explicitement « ok pousse ».
+  - Proposé à RKO : 3 espaces (Opérations employés sans numéros de compte / Pilotage propriétaire / Comptabilité comptable) ; à créer en priorité : liste « À justifier » (471) et saisie d'écritures manuelles (OD) pour le comptable.
+
 ## Reste à faire
+- (prochaine étape) Sur « ok pousse » : git push -u origin claude/partie-double-avant-cvs, PR vers main, puis « ok fusion » → déploiement → RKO active chez CVS (zone OHADA, reprise, stock d'ouverture, bascule admin).
 - (prochaine étape) Attendre le test local de RKO (bundle) puis son feu vert ; ensuite pousser + PR ; puis activer chez CVS ensemble. Attendre la vérification de RKO sur la branche locale claude/partie-double-avant-cvs ; pousser + PR seulement sur son feu vert. Si la branche locale est perdue (conteneur recyclé), refaire à partir de la description ci-dessus.
 - PR #138 (claude/poussins-acompte-couvoir) : acompte versé au couvoir (4091), imputé à la réception. Testée (21 + 3 compta), attend CI vert puis « ok fusion » de RKO.
 - Bascule CVS (hors de portée de l'agent : prod injoignable) : confirmer zone OHADA + reprise historique ; déclarer stock d'ouverture au 28/08/2026 (bouton Calculer) ; admin plateforme : POST /platform-admin/ledger-cutover {companyId, dryRun} puis dryRun:false. (prochaine étape en premier)
