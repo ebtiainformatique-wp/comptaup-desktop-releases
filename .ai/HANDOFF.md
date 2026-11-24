@@ -1,4 +1,4 @@
-STATUS: IN_PROGRESS
+STATUS: DONE
 Agent: claude — 2026-11-24
 
 ## Objectif
@@ -30,9 +30,15 @@ Demande RKO du 24/11 : verifier si CVS est sur le grand livre + brancher tout ce
 7. Amortissement : mois de 30 jours (annee 360), dotation mensuelle constante.
 8. Ouvrir une PR vers main, NE PAS fusionner.
 
-## Reste a faire (prochaine etape en premier)
-1. Recuperer la branche de l'autre session et fusionner.
-2. Appliquer decisions 2,3,4,6,7. 3. Tests 100 %. 4. PR + RAPPORT.md.
+## Fait (nuit du 24/11)
+- Branche commune claude/etats-financiers-fusion (main a jour + partie-double-avant-cvs + etats-financiers-normes).
+- Decisions 1-8 appliquees ; suite API 1194/1194, web 28/28.
+- PR https://github.com/ebtiainformatique-wp/INTENDANCE-BUSINESS-/pull/150 ouverte, NON fusionnee.
+- Autre session (CVS) prevenue : ne pas basculer depuis sa branche.
+
+## Reste a faire (par RKO)
+1. Relire et fusionner la PR #150 (« ok fusion »), deployer.
+2. Prod : npm run ledger:check -- --name "CVS" ; bascule CVS en essai puis en reel (voir RAPPORT.md §7).
 
 ## Notes / pieges
 - Base de test locale : Postgres 16 du conteneur sur le port 5433 (data /var/tmp/pgdata),
