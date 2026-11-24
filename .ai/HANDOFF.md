@@ -1,4 +1,4 @@
-STATUS: IN_PROGRESS
+STATUS: DONE
 Agent: claude — 2026-11-24
 
 ## Objectif
@@ -19,9 +19,9 @@ Demande RKO du 24/11 : verifier si CVS est sur le grand livre + brancher tout ce
 - AUDIT.md, fixtures/attendu.md a la racine de INTENDANCE-BUSINESS-.
 
 ## Reste a faire (prochaine etape en premier)
-1. Verifier le 2e passage complet (garde-fous : import CSV sans prix d'achat desormais refuse).
-2. RAPPORT.md + mise a jour PROGRESS_COMPTA_PARTIE_DOUBLE.md.
-3. Decisions RKO : voir RAPPORT.md (bascule CVS, RESERVES vs 121, dates UTC deja en base, import CSV).
+- Code termine et verifie (suite API 1179/1179, web 28/28). Decisions RKO en attente : voir
+  RAPPORT.md §6 dans INTENDANCE-BUSINESS- (lancer ledger:check sur CVS, fusion avec la branche
+  claude/partie-double-avant-cvs de l'autre session AVANT la bascule CVS, ledger:realign, PR).
 
 ## Notes / pieges
 - Base de test locale : Postgres 16 du conteneur sur le port 5433 (data /var/tmp/pgdata),
