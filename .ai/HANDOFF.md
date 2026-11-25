@@ -1,5 +1,5 @@
 STATUS: IN_PROGRESS
-Agent: claude — 2026-11-24 (soir)
+Agent: claude — 2026-11-25
 
 ## Objectif
 Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, partie double, audit des chiffres réels.
@@ -58,8 +58,11 @@ Pilote ComptaUp pour CVS (clinique/pharmacie vétérinaire) : module poussins, p
 
 - Nuit 24→25/11 : GitHub Actions ne démarre plus (runner_id 0, échec en 2 s, quota probable) → condition « CI vert » de RKO non remplie → AUCUNE FUSION. CI rejouée en local (typecheck, lint, builds, secrets, matrice RBAC, 1184 tests) : OK. Branches mises à jour par merge de main (#147 parametrage Excel fusionnée entre-temps ; force-push refusé). PR brouillon #151 (claude/normes-syscohada, empilée sur #148) : tableau de bord marge brute + résultat, états financiers SYSCOHADA (bilan/CR officiels + SIG + Excel, page Compta > États financiers), lettrage 411/401 (auto + manuel, page Compta > Lettrage).
 
+- 25/11 : l'autre session (« audit bilan/CR », session_01DwRRryomgCk1xEkgiGPPzV) a fusionné, sur décision RKO du 24/11 au soir, ma #146 + sa branche dans claude/etats-financiers-fusion = PR #150 (décisions : soldes inexpliqués de reprise en 121, divers 638 / 628 = télécoms, réalignement intégré à ledger-cutover, amortissement 30/360, bascule CVS depuis #150 seulement). J'ai terminé CCA/PCA 476/477 et export journal type FEC + intégrité, puis tout réintégré PAR-DESSUS #150 : PR #152 (claude/espace-compta-sur-fusion → claude/etats-financiers-fusion), remplace #148/#151. CI locale : 1210 tests OK, builds, lint, secrets, RBAC. GitHub Actions toujours sans runner.
+
 ## Reste à faire
-- (prochaine étape) CCA/PCA 476/477 avec extourne, puis export journal type FEC ; puis rapport du matin à RKO. Fusion #146 → #148 → #151 seulement sur « ok fusion » (ou CI vert).
+- (prochaine étape) RKO : « ok fusion » #150 puis #152 (ou CI GitHub rétablie). Ensuite bascule CVS depuis main (zone OHADA 01/01→31/12/2026, reprise, stock d'ouverture, ledger-cutover). #146/#148/#151 : à fermer (remplacées), sur accord de RKO.
+- (ancien) CCA/PCA 476/477 avec extourne, puis export journal type FEC ; puis rapport du matin à RKO. Fusion #146 → #148 → #151 seulement sur « ok fusion » (ou CI vert).
 - (ancien) CI vert → fusionner #146 puis #148 (rebaser #148 sur main) ; puis dashboard marge brute ; puis les 4 chantiers normes dans l'ordre.
 - (prochaine étape) Sur « ok pousse » : git push -u origin claude/partie-double-avant-cvs, PR vers main, puis « ok fusion » → déploiement → RKO active chez CVS (zone OHADA, reprise, stock d'ouverture, bascule admin).
 - (prochaine étape) Attendre le test local de RKO (bundle) puis son feu vert ; ensuite pousser + PR ; puis activer chez CVS ensemble. Attendre la vérification de RKO sur la branche locale claude/partie-double-avant-cvs ; pousser + PR seulement sur son feu vert. Si la branche locale est perdue (conteneur recyclé), refaire à partir de la description ci-dessus.
