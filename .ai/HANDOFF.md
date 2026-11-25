@@ -37,8 +37,11 @@ Demande RKO du 24/11 : verifier si CVS est sur le grand livre + brancher tout ce
 - Autre session (CVS) prevenue : ne pas basculer depuis sa branche.
 
 ## Reste a faire (par RKO)
-1. Relire et fusionner la PR #150 (« ok fusion »), deployer.
-2. Prod : npm run ledger:check -- --name "CVS" ; bascule CVS en essai puis en reel (voir RAPPORT.md §7).
+- PR #150 FUSIONNEE dans main le 25/11 20:43 UTC.
+- PR #152 (autre session, espace Compta) : en conflit avec main depuis la fusion de #150 ; l'autre session est prevenue.
+- GitHub Actions bloque au niveau du compte (jobs qui ne demarrent pas) : verifier Settings > Billing.
+- Deployer, puis prod : npm run ledger:check -- --name "CVS" ; bascule CVS en essai puis en reel (RAPPORT.md §7).
+- Question ouverte : bouton « Ajouter un produit » introuvable (page Stock, roles OWNER/COMPTABLE).
 
 ## Notes / pieges
 - Base de test locale : Postgres 16 du conteneur sur le port 5433 (data /var/tmp/pgdata),
