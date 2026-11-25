@@ -1,5 +1,5 @@
 STATUS: IN_PROGRESS
-Agent: claude — 2026-11-13
+Agent: claude — 2026-11-25
 
 ## Objectif
 Audit + correction des etats financiers de Compta-Up (bilan, compte de resultat, tableau de bord)
@@ -15,6 +15,10 @@ Le client a demande de travailler en autonomie jusqu'a son retour.
 - Evaluation de la branche partie double de l'autre agent (RAPPORT.md section 6).
 
 ## Reste a faire (prochaine etape en premier)
+- 2026-11-25 : la PR #150 (autre session, etats SYSCOHADA au grand livre + decisions RKO du 24/11)
+  est fusionnee dans main et REMPLACE la PR #108 (branche claude/audit-etats-financiers).
+  Ne pas resoudre le conflit de #108 ; attendre l'accord de RKO pour la fermer.
+- Correction a reporter dans une petite PR : createReport sans retry sur collision reportNumber (500 en double clic).
 - PR ebtiainformatique-wp/INTENDANCE-BUSINESS-#108 ouverte (924/924 tests, controle final 44/44,
   verification navigateur OK). Surveiller la CI ; NE PAS fusionner sans accord explicite du client
   (change les chiffres affiches a tous les clients). Decisions listees dans RAPPORT.md section 7.
